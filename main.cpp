@@ -1,9 +1,12 @@
 #include "sockets/sockets.h"
 
 #include <winsock2.h>
+#include <iostream>
 
+using namespace std;
 
 void menu();
+int elegirOpcion();
 void protocoloCompra();
 
 SOCKET s;
@@ -45,7 +48,7 @@ void menu()
 				break;
 
 			default:
-				cout << endl << "ERROR! La opción seleccionada no existe" << enld;
+				cout << endl << "ERROR! La opción seleccionada no existe" << endl;
 				break;
 		}
 

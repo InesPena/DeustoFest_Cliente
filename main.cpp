@@ -2,7 +2,9 @@
 
 #include <winsock2.h>
 
+
 void menu();
+void protocoloCompra();
 
 SOCKET s;
 char sendBuff[512];
@@ -33,13 +35,10 @@ void menu()
 		switch (op) {
 
 			case 1:
-				strcpy(sendBuff, "COMANDO 1");
-				send(s, sendBuff, sizeof(sendBuff), 0);
 				break;
 
 			case 2:
-				strcpy(sendBuff, "COMANDO 2");
-				send(s, sendBuff, sizeof(sendBuff), 0);
+				protocoloCompra();
 				break;
 
 			case 3:
@@ -59,4 +58,18 @@ int elegirOpcion()
 	cout << endl << "Opción";
 	cin >> op;
 	return op;
+}
+
+int protocoloCompra()
+{
+	strcpy(sendBuff, "COMPRA");
+	send(s, sendBuff, sizeof(sendBuff), 0);
+	strcpy(sendBuff, "72106669J");
+	send(s, sendBuff, sizeof(sendBuff), 0);
+	strcpy(sendBuff, "INES");
+	send(s, sendBuff, sizeof(sendBuff), 0);
+	strcpy(sendBuff, "inespena@opendeusto.es");
+	send(s, sendBuff, sizeof(sendBuff), 0);
+	strcpy(sendBuff, "COMPRA-END");
+	send(s, sendBuff, sizeof(sendBuff), 0);
 }

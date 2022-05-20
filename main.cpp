@@ -106,5 +106,5 @@ int main(int argc, char *argv[])
 {
 	establecerConexion(s, sendBuff, recvBuff);
 	menu();
-	cerrarConexion(s);
+	// cerrarConexion(s);
 }

@@ -3,7 +3,25 @@
 
 #include <winsock2.h>
 
-void establecerConexion(SOCKET comm_socket, char sendBuff[], char recvBuff[]);
-void protocoloCliente(SOCKET comm_socket, char sendBuff[], char recvBuff[]);
+namespace gestores
+{
+	class GestorSocket
+	{
+	private:
+		SOCKET s;
+		char sendBuff[512];
+		char recvBuff[512];
+
+	public:
+		GestorSocket();
+		~GestorSocket();
+		void establecerConexion(SOCKET comm_socket, char sendBuff[], char recvBuff[]);
+		void protocoloCliente(SOCKET comm_socket, char sendBuff[], char recvBuff[]);
+	};
+}
+
+
+
+
 
 #endif

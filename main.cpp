@@ -15,6 +15,8 @@ SOCKET s;
 char sendBuff[512];
 char recvBuff[512];
 
+int numConsultas = 0;
+
 int elegirOpcion()
 {
 	int op;
@@ -37,15 +39,6 @@ int menuEntrada()
 
 void envioCompra()
 {
-	/*
-	 * ENVIAR INFORMACIÓN
-	 * 	0. Camping
-	 *	1. Bus
-	 * 	2. Precio
-	 * 	3. DNI
-	 * 	4. Nombre
-	 * 	5. Email
-	 */
 
 	int pEnt;
 	char opBus, opCamp;
@@ -53,11 +46,11 @@ void envioCompra()
 
 	int opEnt = menuEntrada();
 
-	if (opEnt == 1)pEnt = 75;
+	if (opEnt == 1) pEnt = 75;
 	if (opEnt == 2) pEnt = 80;
 	if (opEnt == 3) pEnt = 142;
 
-	cout << "¿Desa reservar una plaza de camping? (s/n) "; cin >> opCamp;
+	cout << "¿Desea reservar una plaza de camping? (s/n) "; cin >> opCamp;
 	if (strcmp(&opCamp, "s")){
 		pEnt += PRECIO_CAMP;
 		sprintf(sendBuff, "%c", "1");
@@ -121,6 +114,12 @@ void menu()
 
 			case 1:
 				strcpy(&comando, "CARTELERA");
+				if (numConsultas == 0){
+					//PEDIR DE SERVIDOR SERVIDOR
+					//GUARDAR DATOS EN FICHERO TXT/CSV
+				} else {
+					//IMPRIMIR DE FICHERO TXT/CSV
+				}
 				break;
 
 			case 2:
@@ -144,7 +143,7 @@ void menu()
 
 int main(int argc, char *argv[])
 {
-	establecerConexion(s, sendBuff, recvBuff);
+	//establecerConexion(s, sendBuff, recvBuff);
 	menu();
 	// cerrarConexion(s);
 }

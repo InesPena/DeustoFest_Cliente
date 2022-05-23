@@ -20,8 +20,4 @@ namespace gestores
 	};
 }
 
-
-
-
-
 #endif

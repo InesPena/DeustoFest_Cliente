@@ -1,7 +1,8 @@
 
 
 #include "Cartelera.h"
-#include "Concierto.h"
+#include "../concierto/Concierto.h"
+
 #include "iostream"
 using namespace std;
 

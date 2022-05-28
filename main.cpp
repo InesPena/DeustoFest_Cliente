@@ -1,5 +1,6 @@
-#include "Cartelera.h"
-#include "Concierto.h"
+#include "clases/cartelera/Cartelera.h"
+#include "clases/concierto/Concierto.h"
+
 #include <stdio.h>
 #include <winsock2.h>
 #include <iostream>

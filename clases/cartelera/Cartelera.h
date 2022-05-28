@@ -2,7 +2,9 @@
 
 #ifndef CARTELERA_H_
 #define CARTELERA_H_
-#include "Concierto.h"
+
+#include "../concierto/Concierto.h"
+
 class Cartelera {
 public:
 	int numConciertos;

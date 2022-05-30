@@ -28,11 +28,11 @@ int elegirOpcion() {
 }
 
 int menuEntrada() {
-	cout << "ENTRADAS" << endl;
+	cout << endl << "ENTRADAS" << endl;
 	cout << "------------------------------" << endl << endl;
 	cout << "1. Entrada Día 22............75€" << endl;
 	cout << "2. Entrada Día 23............80€" << endl;
-	cout << "3. Abono completo...........142€" << endl;
+	cout << "3. Abono completo...........142€" << endl << endl;
 
 	int op = elegirOpcion();
 	return op;

@@ -48,18 +48,20 @@ int main(int argc, char *argv[]) {
 	int pEnt;
 	char opBus, opCamp;
 	char dni[10], nom[20], email[50];
+	int numPeticion = 0;
+	int cont1 = 0, cont2 = 0;
 
-	cout<<"Initialising Winsock..."<<endl;
+	cout << "Initialising Winsock..." << endl;
 	if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0) {
-		cout<<"Failed. Error Code : "<<WSAGetLastError()<<endl;
+		cout << "Failed. Error Code : " << WSAGetLastError() << endl;
 		return -1;
 	}
 
-	cout<<"Initialised."<<endl;
+	cout << "Initialised." << endl;
 
 //SOCKET creation
 	if ((s = socket(AF_INET, SOCK_STREAM, 0)) == INVALID_SOCKET) {
-		cout<<"Could not create socket : "<<WSAGetLastError()<<endl;
+		cout << "Could not create socket : " << WSAGetLastError() << endl;
 		WSACleanup();
 		return -1;
 	}
@@ -72,14 +74,14 @@ int main(int argc, char *argv[]) {
 
 //CONNECT to remote server
 	if (connect(s, (struct sockaddr*) &server, sizeof(server)) == SOCKET_ERROR) {
-		cout<<"Connection error: "<<WSAGetLastError()<<endl;
+		cout << "Connection error: " << WSAGetLastError() << endl;
 		closesocket(s);
 		WSACleanup();
 		return -1;
 	}
 
-	cout<<"Connection stablished with: "<<inet_ntoa(server.sin_addr)<<
-			ntohs(server.sin_port)<<endl<<endl;
+	cout << "Connection stablished with: " << inet_ntoa(server.sin_addr)
+			<< ntohs(server.sin_port) << endl << endl;
 
 	/*EMPIEZA EL PROGRAMA DEL CLIENTE*/
 
@@ -89,31 +91,83 @@ int main(int argc, char *argv[]) {
 		cout << "1. Consultar Cartelera" << endl;
 		cout << "2. Comprar Entrada" << endl;
 		cout << "3. Devolver Entrada" << endl;
-		cout << "4. Salir"<<endl << endl;
+		cout << "4. Salir" << endl << endl;
 		cout << "Elige una opcion: ";
 		cin >> opcion;
+
 		sprintf(sendBuff, "%c", opcion);
 		send(s, sendBuff, sizeof(sendBuff), 0);
+
 		switch (opcion) {
+
 		case '1':
-			recv(s, recvBuff, sizeof(recvBuff), 0);
-			sscanf(recvBuff, "%d", &numConciertos);
-			cart = new Cartelera(numConciertos);
-			for (i = 0; i < numConciertos; i++) {
+			numPeticion++;
+
+			if (numPeticion == 1) {
 				recv(s, recvBuff, sizeof(recvBuff), 0);
-				Concierto *c = new Concierto();
-				c->cod = atoi(strtok(recvBuff, ";"));
-				char *arti = strtok(NULL, ";");
-				c->artista = new char[strlen(arti) + 1];
-				strcpy(c->artista, arti);
-				c->escenario = atoi(strtok(NULL, ";"));
-				c->dia = atoi(strtok(NULL, ";"));
-				c->coste = atoi(strtok(NULL, ""));
-				//sscanf(recvBuff, "%d %s %d %d %d", &c->cod, c->artista,	&c->escenario, &c->dia, &c->coste);
-				cart->aniadirConcierto(c);
+				sscanf(recvBuff, "%d", &numConciertos);
+				cart = new Cartelera(numConciertos);
+
+				for (i = 0; i < numConciertos; i++) {
+					recv(s, recvBuff, sizeof(recvBuff), 0);
+					Concierto *c = new Concierto();
+					c->cod = atoi(strtok(recvBuff, ";"));
+					char *arti = strtok(NULL, ";");
+					c->artista = new char[strlen(arti) + 1];
+					strcpy(c->artista, arti);
+					c->escenario = atoi(strtok(NULL, ";"));
+					c->dia = atoi(strtok(NULL, ";"));
+					c->coste = atoi(strtok(NULL, ""));
+					//sscanf(recvBuff, "%d %s %d %d %d", &c.cod, c.artista,	&c.escenario, &c.dia, &c.coste);
+					cart->aniadirConcierto(c);
+				}
+
+				//ESCRIBIR EN FICHERO
+
+				string filename("dia22.txt");
+				fstream file_out;
+				file_out.open(filename, std::ios_base::out);
+
+				string filename2("dia23.txt");
+				fstream file_out2;
+				file_out2.open(filename2, std::ios_base::out);
+
+				if (!file_out.is_open()) {
+					cout << "failed to open " << filename << '\n';
+				} else {
+					string title1("DIA 22\n");
+					file_out.write(title1.data(), title1.size());
+					string title2("DIA 23\n");
+					file_out2.write(title2.data(), title2.size());
+
+					for (int i; i < numConciertos; i++) {
+						if (cart->conciertos[i]->dia == 1) {
+							string content;
+							content.push_back(*cart->conciertos[i]->artista);
+							file_out.write(content.data(), content.size());
+							string enter("\n");
+							file_out.write(enter.data(), enter.size());
+							cont1++;
+						} else {
+							string content;
+							content.push_back(*cart->conciertos[i]->artista);
+							file_out2.write(content.data(), content.size());
+							string enter("\n");
+							file_out2.write(enter.data(), enter.size());
+							cont2++;
+						}
+					}
+				}
+
+				cart->mostrarCartelera(cont1, cont2);
+
+			} else {
+
+				cart->mostrarCartelera(cont1, cont2);
 			}
-			cart->mostrarCartelera();
+
 			break;
+
 		case '2':
 			opEnt = menuEntrada();
 

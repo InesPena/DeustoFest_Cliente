@@ -2,6 +2,8 @@
 #include "../concierto/Concierto.h"
 #include <cstdlib>
 #include <cstdio>
+#include <iostream>
+#include <fstream>
 
 #include "iostream"
 using namespace std;
@@ -15,21 +17,28 @@ Cartelera::~Cartelera() {
 	// TODO Auto-generated destructor stub
 }
 
-void Cartelera::mostrarCartelera() {
-	int i;
-	for (i = 0; i < numConciertos; i++) {
-		cout << "Dia: " << conciertos[i]->dia << " " << conciertos[i]->artista
-				<< " " << conciertos[i]->escenario << endl;
-	}
-
-	/*ifstream archivo_entrada("dia22.txt");
-
-	 string linea;
-
-	 while (getline(archivo_entrada, linea))
-	 {
-	 cout << linea << endl;
+void Cartelera::mostrarCartelera(int cont1, int cont2) {
+	/*int i;
+	 for (i = 0; i < numConciertos; i++) {
+	 cout << "Dia: " << conciertos[i]->dia << " " << conciertos[i]->artista
+	 << " " << conciertos[i]->escenario << endl;
 	 }*/
+
+	char cadena[128];
+
+	ifstream fe("dia22.txt");
+	while (!fe.eof()) {
+		fe >> cadena;
+		cout << cadena << endl;
+	}
+	fe.close();
+
+	ifstream fe2("dia23.txt");
+	while (!fe2.eof()) {
+		fe2 >> cadena;
+		cout << cadena << endl;
+	}
+	fe2.close();
 
 }
 

@@ -8,6 +8,9 @@
 #include <cstdlib>
 #include <cstdio>
 
+#include <iostream>
+#include <fstream>
+
 #define SERVER_IP "127.0.0.1"
 #define SERVER_PORT 6000
 using namespace std;
@@ -17,16 +20,14 @@ using namespace std;
 
 int numPeticion = 0;
 
-int elegirOpcion()
-{
+int elegirOpcion() {
 	int op;
 	cout << endl << "Opción: ";
 	cin >> op;
 	return op;
 }
 
-int menuEntrada()
-{
+int menuEntrada() {
 	cout << "ENTRADAS" << endl;
 	cout << "------------------------------" << endl << endl;
 	cout << "1. Entrada Día 22............75€" << endl;
@@ -37,20 +38,20 @@ int menuEntrada()
 	return op;
 }
 
-int main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]) {
 
 	WSADATA wsaData;
 	SOCKET s;
 	struct sockaddr_in server;
 	char sendBuff[512], recvBuff[512];
-	char opcion, opc;
+	char opcion;
 	int numConciertos, i;
 	Cartelera *cart; // Lista de carteleras
-	int opEnt,fin=0;
+	int opEnt;
 	int pEnt;
 	char opBus, opCamp;
 	char dni[10], nom[20], email[50];
+	int cont1 = 0, cont2 = 0;
 
 	printf("\nInitialising Winsock...\n");
 	if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0) {
@@ -102,16 +103,14 @@ int main(int argc, char *argv[])
 		switch (opcion) {
 
 		case '1':
-			numPeticion ++;
+			numPeticion++;
 
-			if (numPeticion == 1)
-			{
+			if (numPeticion == 1) {
 				recv(s, recvBuff, sizeof(recvBuff), 0);
 				sscanf(recvBuff, "%d", &numConciertos);
 				cart = new Cartelera(numConciertos);
 
-				for (i = 0; i < numConciertos; i++)
-				{
+				for (i = 0; i < numConciertos; i++) {
 					recv(s, recvBuff, sizeof(recvBuff), 0);
 					Concierto *c = new Concierto();
 					c->cod = atoi(strtok(recvBuff, ";"));
@@ -124,26 +123,61 @@ int main(int argc, char *argv[])
 					//sscanf(recvBuff, "%d %s %d %d %d", &c.cod, c.artista,	&c.escenario, &c.dia, &c.coste);
 					cart->aniadirConcierto(c);
 				}
-				cart->mostrarCartelera();
 
-				//GUARDAR A FICHERO
+				//ESCRIBIR EN FICHERO
 
-				FILE *file;
-				file = fopen("cartelera.txt", "w");
+				/*string filename("dia22.txt");
+				fstream file_out;
+				file_out.open(filename, std::ios_base::out);
 
+				string filename2("dia23.txt");
+				fstream file_out2;
+				file_out2.open(filename2, std::ios_base::out);
+
+				if (!file_out.is_open()) {
+					cout << "failed to open " << filename << '\n';
+				} else {
+					string title1("DIA 23\n");
+					file_out.write(title1.data(), title1.size());
+					string title2("DIA 23\n");
+					file_out2.write(title1.data(), title1.size());
+
+					for (int i; i < numConciertos; i++) {
+						if (cart->conciertos[i]->dia == 1) {
+							string content;
+							content.push_back(*cart->conciertos[i]->artista);
+							file_out.write(content.data(), content.size());
+							string enter("\n");
+							file_out.write(enter.data(), enter.size());
+							cont1++;
+						} else {
+							string content;
+							content.push_back(*cart->conciertos[i]->artista);
+							file_out2.write(content.data(), content.size());
+							string enter("\n");
+							file_out2.write(enter.data(), enter.size());
+							cont2++;
+						}
+					}
+				}*/
+
+				cart->mostrarCartelera(cont1, cont2);
 
 			} else {
 
-				//SACAR DE FICHERO
+				cart->mostrarCartelera(cont1, cont2);
 			}
 
 			break;
 		case '2':
 			opEnt = menuEntrada();
 
-			if (opEnt == 1) pEnt = 75;
-			if (opEnt == 2) pEnt = 80;
-			if (opEnt == 3)	pEnt = 142;
+			if (opEnt == 1)
+				pEnt = 75;
+			if (opEnt == 2)
+				pEnt = 80;
+			if (opEnt == 3)
+				pEnt = 142;
 
 			cout << "¿Desea reservar una plaza de camping? (s/n) ";
 			cin >> opCamp;

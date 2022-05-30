@@ -11,7 +11,7 @@ public:
 	Concierto **conciertos;
 	Cartelera(int tam);
 	virtual ~Cartelera();
-	void mostrarCartelera(int cont1, int cont2);
+	void mostrarCartelera();
 	void aniadirConcierto(Concierto *c);
 };
 

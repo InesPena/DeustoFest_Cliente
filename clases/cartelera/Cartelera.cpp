@@ -1,7 +1,5 @@
-
 #include "Cartelera.h"
 #include "../concierto/Concierto.h"
-
 #include <cstdlib>
 #include <cstdio>
 
@@ -17,20 +15,21 @@ Cartelera::~Cartelera() {
 	// TODO Auto-generated destructor stub
 }
 
-void Cartelera::mostrarCartelera(int cont1, int cont2) {
-	/*int i;
-	 for(i=0;i<numConciertos;i++){
-	 cout<<"Dia: "<<conciertos[i]->dia<<" "<<conciertos[i]->artista<<" "<<conciertos[i]->escenario<<endl;
-	 }*/
+void Cartelera::mostrarCartelera() {
+	int i;
+	for (i = 0; i < numConciertos; i++) {
+		cout << "Dia: " << conciertos[i]->dia << " " << conciertos[i]->artista
+				<< " " << conciertos[i]->escenario << endl;
+	}
 
 	/*ifstream archivo_entrada("dia22.txt");
 
-	string linea;
+	 string linea;
 
-	while (getline(archivo_entrada, linea))
-	{
-		cout << linea << endl;
-	}*/
+	 while (getline(archivo_entrada, linea))
+	 {
+	 cout << linea << endl;
+	 }*/
 
 }
 

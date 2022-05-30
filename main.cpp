@@ -18,8 +18,6 @@ using namespace std;
 #define PRECIO_CAMP 35
 #define PRECIO_BUS 47
 
-int numPeticion = 0;
-
 int elegirOpcion() {
 	int op;
 	cout << endl << "Opción: ";
@@ -28,42 +26,40 @@ int elegirOpcion() {
 }
 
 int menuEntrada() {
-	cout << endl << "ENTRADAS" << endl;
+	cout << "ENTRADAS" << endl;
 	cout << "------------------------------" << endl << endl;
 	cout << "1. Entrada Día 22............75€" << endl;
 	cout << "2. Entrada Día 23............80€" << endl;
-	cout << "3. Abono completo...........142€" << endl << endl;
+	cout << "3. Abono completo...........142€" << endl;
 
 	int op = elegirOpcion();
 	return op;
 }
 
 int main(int argc, char *argv[]) {
-
 	WSADATA wsaData;
 	SOCKET s;
 	struct sockaddr_in server;
 	char sendBuff[512], recvBuff[512];
 	char opcion;
 	int numConciertos, i;
-	Cartelera *cart; // Lista de carteleras
+	Cartelera *cart;
 	int opEnt;
 	int pEnt;
 	char opBus, opCamp;
 	char dni[10], nom[20], email[50];
-	int cont1 = 0, cont2 = 0;
 
-	printf("\nInitialising Winsock...\n");
+	cout<<"Initialising Winsock..."<<endl;
 	if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0) {
-		printf("Failed. Error Code : %d", WSAGetLastError());
+		cout<<"Failed. Error Code : "<<WSAGetLastError()<<endl;
 		return -1;
 	}
 
-	printf("Initialised.\n");
+	cout<<"Initialised."<<endl;
 
-	//SOCKET creation
+//SOCKET creation
 	if ((s = socket(AF_INET, SOCK_STREAM, 0)) == INVALID_SOCKET) {
-		printf("Could not create socket : %d", WSAGetLastError());
+		cout<<"Could not create socket : "<<WSAGetLastError()<<endl;
 		WSACleanup();
 		return -1;
 	}
@@ -74,16 +70,16 @@ int main(int argc, char *argv[]) {
 	server.sin_family = AF_INET;
 	server.sin_port = htons(SERVER_PORT);
 
-	//CONNECT to remote server
+//CONNECT to remote server
 	if (connect(s, (struct sockaddr*) &server, sizeof(server)) == SOCKET_ERROR) {
-		printf("Connection error: %d", WSAGetLastError());
+		cout<<"Connection error: "<<WSAGetLastError()<<endl;
 		closesocket(s);
 		WSACleanup();
 		return -1;
 	}
 
-	printf("Connection stablished with: %s (%d)\n", inet_ntoa(server.sin_addr),
-			ntohs(server.sin_port));
+	cout<<"Connection stablished with: "<<inet_ntoa(server.sin_addr)<<
+			ntohs(server.sin_port)<<endl<<endl;
 
 	/*EMPIEZA EL PROGRAMA DEL CLIENTE*/
 
@@ -93,81 +89,30 @@ int main(int argc, char *argv[]) {
 		cout << "1. Consultar Cartelera" << endl;
 		cout << "2. Comprar Entrada" << endl;
 		cout << "3. Devolver Entrada" << endl;
-		cout << "4. Salir" << endl;
+		cout << "4. Salir"<<endl << endl;
 		cout << "Elige una opcion: ";
 		cin >> opcion;
-
 		sprintf(sendBuff, "%c", opcion);
 		send(s, sendBuff, sizeof(sendBuff), 0);
-
 		switch (opcion) {
-
 		case '1':
-			numPeticion++;
-
-			if (numPeticion == 1) {
+			recv(s, recvBuff, sizeof(recvBuff), 0);
+			sscanf(recvBuff, "%d", &numConciertos);
+			cart = new Cartelera(numConciertos);
+			for (i = 0; i < numConciertos; i++) {
 				recv(s, recvBuff, sizeof(recvBuff), 0);
-				sscanf(recvBuff, "%d", &numConciertos);
-				cart = new Cartelera(numConciertos);
-
-				for (i = 0; i < numConciertos; i++) {
-					recv(s, recvBuff, sizeof(recvBuff), 0);
-					Concierto *c = new Concierto();
-					c->cod = atoi(strtok(recvBuff, ";"));
-					char *arti = strtok(NULL, ";");
-					c->artista = new char[strlen(arti) + 1];
-					strcpy(c->artista, arti);
-					c->escenario = atoi(strtok(NULL, ";"));
-					c->dia = atoi(strtok(NULL, ";"));
-					c->coste = atoi(strtok(NULL, ""));
-					//sscanf(recvBuff, "%d %s %d %d %d", &c.cod, c.artista,	&c.escenario, &c.dia, &c.coste);
-					cart->aniadirConcierto(c);
-				}
-
-				//ESCRIBIR EN FICHERO
-
-				/*string filename("dia22.txt");
-				fstream file_out;
-				file_out.open(filename, std::ios_base::out);
-
-				string filename2("dia23.txt");
-				fstream file_out2;
-				file_out2.open(filename2, std::ios_base::out);
-
-				if (!file_out.is_open()) {
-					cout << "failed to open " << filename << '\n';
-				} else {
-					string title1("DIA 23\n");
-					file_out.write(title1.data(), title1.size());
-					string title2("DIA 23\n");
-					file_out2.write(title1.data(), title1.size());
-
-					for (int i; i < numConciertos; i++) {
-						if (cart->conciertos[i]->dia == 1) {
-							string content;
-							content.push_back(*cart->conciertos[i]->artista);
-							file_out.write(content.data(), content.size());
-							string enter("\n");
-							file_out.write(enter.data(), enter.size());
-							cont1++;
-						} else {
-							string content;
-							content.push_back(*cart->conciertos[i]->artista);
-							file_out2.write(content.data(), content.size());
-							string enter("\n");
-							file_out2.write(enter.data(), enter.size());
-							cont2++;
-						}
-					}
-				}*/
-
-				cart->mostrarCartelera(cont1, cont2);
-
-			} else {
-
-				cart->mostrarCartelera(cont1, cont2);
+				Concierto *c = new Concierto();
+				c->cod = atoi(strtok(recvBuff, ";"));
+				char *arti = strtok(NULL, ";");
+				c->artista = new char[strlen(arti) + 1];
+				strcpy(c->artista, arti);
+				c->escenario = atoi(strtok(NULL, ";"));
+				c->dia = atoi(strtok(NULL, ";"));
+				c->coste = atoi(strtok(NULL, ""));
+				//sscanf(recvBuff, "%d %s %d %d %d", &c->cod, c->artista,	&c->escenario, &c->dia, &c->coste);
+				cart->aniadirConcierto(c);
 			}
-
+			cart->mostrarCartelera();
 			break;
 		case '2':
 			opEnt = menuEntrada();
@@ -181,7 +126,6 @@ int main(int argc, char *argv[]) {
 
 			cout << "¿Desea reservar una plaza de camping? (s/n) ";
 			cin >> opCamp;
-
 			if (opCamp == 's') {
 				pEnt += PRECIO_CAMP;
 				sprintf(sendBuff, "1");
@@ -219,9 +163,7 @@ int main(int argc, char *argv[]) {
 			cin >> email;
 			sprintf(sendBuff, "%s", nom);
 			send(s, sendBuff, sizeof(sendBuff), 0);
-
 			break;
-
 		case '3':
 			cout << "DNI: ";
 			cin >> dni;
@@ -230,7 +172,6 @@ int main(int argc, char *argv[]) {
 			recv(s, recvBuff, sizeof(recvBuff), 0); //Recibe el mensaje de eliminacion correcta
 			cout << recvBuff << endl;
 			break;
-
 		case '4':
 			cout << "FIN" << endl;
 			break;
@@ -238,8 +179,7 @@ int main(int argc, char *argv[]) {
 	} while (opcion != '4');
 
 	/*ACABA EL PROGRAMA DEL CLIENTE*/
-
-	// CLOSING the socket and cleaning Winsock...
+// CLOSING the socket and cleaning Winsock...
 	closesocket(s);
 	WSACleanup();
 
